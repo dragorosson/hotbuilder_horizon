@@ -23,7 +23,7 @@ from openstack_dashboard.api import base
 #from heat.common.region import get_regions
 
 class IndexView(TemplateView):
-    template_name = 'common/hotui.html'
+    template_name = 'hotui_base.html'
 
     def get_context_data(self, **kwargs):
         resource_names = [r.resource_type for r in
