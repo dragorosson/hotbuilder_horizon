@@ -36,6 +36,9 @@
 {% endblock %}
 
 {% block main %}
-    {% block page %}
-    {% endblock %}
+    {% include "common/hotui.html" %}
+
+    <script>
+        var HOTUI_API_ROOT = '/project/heat/api/';
+    </script>
 {% endblock %}

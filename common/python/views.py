@@ -12,24 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import yaml
+import logging
 import json
 
-from django.views.generic import TemplateView
-import openstack_dashboard.api.heat as heat_api
-from openstack_dashboard.api import base
+from django.views.generic import TemplateView  # noqa
 
+from heat.api.hotui import hotui_api
+from heat.common.region import get_endpoint
+from heat.common.region import get_regions
 
-#from heat.common.region import get_regions
+logger = logging.getLogger(__name__)
 
 class IndexView(TemplateView):
-    template_name = 'hotui_base.html'
+    template_name = 'hotui/hotui_base.html'
 
     def get_context_data(self, **kwargs):
-        resource_names = [r.resource_type for r in
-                          heat_api.resource_types_list(self.request)]
         context = {}
-        context['resource_names'] = json.dumps(resource_names)
-        context['region_value'] = 'region'
+        request = self.request
+        region_value = get_regions(request)[0].get('value')
+        heat_endpoint = get_endpoint(request, region_value)
+        resource_names = [t.resource_type for t in
+                          hotui_api.resource_type_list(request, heat_endpoint)]
 
+        context['region_value'] = region_value
+        context['stack_endpoint'] = heat_endpoint
+        context['resource_names'] = json.dumps(resource_names)
+                    
         return context
